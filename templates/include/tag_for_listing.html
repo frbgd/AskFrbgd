@@ -1,0 +1,16 @@
+{% load static %}
+
+<ul class="nav">
+    <li class="nav-item">
+        <div class="title">Tag:</div>
+    </li>
+    <li class="nav-item">
+        {% for tag in tags %}
+            <div class="nav-link title-link">
+                <a href="{% url "tag" tag_name=tag.text %}">
+                    {{ tag.text }}
+                </a>
+            </div>
+        {% endfor %}
+    </li>
+</ul>

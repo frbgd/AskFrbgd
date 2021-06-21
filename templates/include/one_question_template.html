@@ -1,0 +1,43 @@
+{% load static %}
+
+<div class="row question">
+    <div class="col-2">
+        <div>
+             {% if question.author.image %}
+                 <img class="img_in_question" src="{% static "img/{{ question.author.image }}" %}">
+             {% else %}
+                 <img class="img_in_question" src="{% static "img/moto.jpg" %}">
+             {% endif %}
+        </div>
+        <div class="likes_in_question">
+            <a href="#">👍</a>
+            {{ question.likequestions_set.count }}
+{#            <a href="#">👎</a>#}
+        </div>
+    </div>
+    <div class="col-10">
+        <div class="one-question-title">
+            <a href="{% url "question" pk=question.id %}">
+                {{ question.title }}
+            </a>
+        </div>
+        <div class="one-question-text">
+            {{ question.text }}
+        </div>
+        <div class="row question-footer">
+            <div class="col-1"></div>
+            <div class="col-2">Tags:</div>
+            <div class="col-6">
+                <ul class="nav">
+                    {% for tag in question.tag.all %}
+                        <li class="nav-item second-question-tag">
+                            <a href="{% url "tag" tag_name=tag %}">
+                                {{ tag.text }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

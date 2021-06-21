@@ -1,0 +1,16 @@
+{% extends "include/base_login.html" %}
+
+{% load static %}
+
+{% block content %}
+    <a class="nav-link title-link" href="{% url "hot" %}">Hot questions</a>
+    {% for question in page.object_list %}
+        {% include "include/one_question_template.html" %}
+    {% endfor %}
+    {% include "include/paginator.html" %}
+{% endblock content %}
+
+{% block side %}
+    {% include "include/popular_tags.html" %}
+    {% include "include/best_members.html" %}
+{% endblock side %}

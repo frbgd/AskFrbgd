@@ -1,0 +1,35 @@
+{% load static %}
+<!doctype html>
+<html lang="en"
+      class="h-100 font">
+
+{% include "include/navbar_signup.html" %}
+
+<body class="d-flex flex-column h-100">
+<!-- Begin page content -->
+<main class="flex-shrink-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                {% block content %}
+                {% endblock content %}
+            </div>
+            <!-- right panel -->
+            <div class="col-4">
+                {% block side %}
+                {% endblock side %}
+            </div>
+        </div>
+    </div>
+</main>
+<!-- footer -->
+<footer class="bg-light text-center text-lg-start">
+    <div class="text-center p-3 bg-light">
+        <a class="nav-text"
+           href="#">AskFrbgd</a>
+    </div>
+</footer>
+<script src="{% static "js/bootstrap.bundle.min.js" %}"></script>
+</body>
+
+</html>

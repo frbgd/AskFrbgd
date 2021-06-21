@@ -1,0 +1,19 @@
+{% extends "include/base_signup.html" %}
+
+{% load static %}
+
+{% block content %}
+    {% include "include/one_question_template.html" %}
+    <div class="dark-line"></div>
+    {% for answer in page.object_list %}
+        {% include "include/answer_template.html" %}
+    {% endfor %}
+    {% include "include/paginator.html" %}
+    <div class="dark-line"></div>
+    {% include "include/make_answer.html" %}
+{% endblock content %}
+
+{% block side %}
+    {% include "include/popular_tags.html" %}
+    {% include "include/best_members.html" %}
+{% endblock side %}
