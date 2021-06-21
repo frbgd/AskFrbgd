@@ -10,9 +10,17 @@
              {% endif %}
         </div>
         <div class="likes_in_question">
-            <a href="#">👍</a>
+            {% if question.current_user_mark == 1 %}
+                👍
+            {% else %}
+                <a href="#">👍</a>
+            {% endif %}
             {{ question.likes_cnt }}
-            <a href="#">👎</a>
+            {% if question.current_user_mark == -1 %}
+                👎
+            {% else %}
+                <a href="#">👎</a>
+            {% endif %}
         </div>
     </div>
     <div class="col-10">

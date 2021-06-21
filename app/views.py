@@ -1,7 +1,7 @@
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import View
@@ -62,7 +62,7 @@ class HotView(View):
     """Список “лучших” вопросов"""
 
     def get(self, request):
-        context = paginate(Question.objects.get_hottest(), request, 3)
+        context = paginate(Question.objects.get_hottest(request.user.user.id), request, 3)
         return render(request, 'hot_questions.html', context)
 
 
@@ -70,7 +70,7 @@ class ListingQView(View):
     """Список вопросов по тегу"""
 
     def get(self, request, tag_name):
-        context = paginate(Question.objects.get_by_tag(tag_name), request, 3)
+        context = paginate(Question.objects.get_by_tag(tag_name, request.user.user.id), request, 3)
         context['tags'] = Tag.objects.get_by_text(tag_name)
         return render(request, 'listing_q.html', context)
 
@@ -109,9 +109,11 @@ class QuestionView(View):
     """Страница 1 вопроса со списком ответов"""
 
     def get(self, request, pk):
-        q = get_object_or_404(Question, pk=pk)
+        q = Question.objects.get_one(pk, request.user.user.id)
+        if len(q) == 0:
+            raise Http404('Question doesn\'t found')
         context = paginate(Answer.objects.get_by_question(pk), request, 3)
-        context['question'] = q
+        context['question'] = q[0]
         context['form'] = AnswerForm()
         return render(request, 'question.html', context)
 
@@ -175,5 +177,5 @@ class IndexView(View):
     """Список новых вопросов"""
 
     def get(self, request):
-        context = paginate(Question.objects.get_latest(), request, 3)
+        context = paginate(Question.objects.get_latest(request.user.user.id), request, 3)
         return render(request, 'index.html', context)

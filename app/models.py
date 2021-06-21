@@ -20,44 +20,69 @@ class User(models.Model):
 
 
 class QuestionManager(models.Manager):
-    def get_latest(self):
-        # return self.all().order_by('-created')    # сложна сюда впилить join и sum!
-        return self.raw("""
+    def get_one(self, pk, user_id):
+        return self.raw(f"""
         SELECT 
-                sum(lq.mark) AS likes_cnt, 
-                * 
+                sum(lq.mark) AS likes_cnt,
+                lq1.mark AS current_user_mark, 
+                q.id AS id, q.title AS title, q.text AS text, q.author_id AS author_id, q.created AS created
         FROM app_question q
             LEFT JOIN app_likequestions lq 
-                ON q.id = lq.question_id 
+                ON q.id = lq.question_id
+            LEFT JOIN app_likequestions lq1
+                ON (q.id = lq1.question_id AND lq1.user_id = '{user_id}')
+        WHERE q.id = '{pk}' 
         GROUP BY lq.question_id 
         ORDER BY q.created DESC;
         """)
 
-    def get_hottest(self):
-        return self.raw("""
+    def get_latest(self, user_id):
+        # return self.all().order_by('-created')    # сложна сюда впилить join и sum!
+        return self.raw(f"""
         SELECT 
-                sum(lq.mark) AS likes_cnt, 
-                * 
+                sum(lq.mark) AS likes_cnt,
+                lq1.mark AS current_user_mark, 
+                q.id AS id, q.title AS title, q.text AS text, q.author_id AS author_id, q.created AS created
+        FROM app_question q
+            LEFT JOIN app_likequestions lq 
+                ON q.id = lq.question_id
+            LEFT JOIN app_likequestions lq1
+                ON (q.id = lq1.question_id AND lq1.user_id = '{user_id}') 
+        GROUP BY lq.question_id 
+        ORDER BY q.created DESC;
+        """)
+
+    def get_hottest(self, user_id):
+        return self.raw(f"""
+        SELECT 
+                sum(lq.mark) AS likes_cnt,
+                lq1.mark AS current_user_mark, 
+                q.id AS id, q.title AS title, q.text AS text, q.author_id AS author_id, q.created AS created
         FROM app_question q
             LEFT JOIN app_likequestions lq 
                 ON q.id = lq.question_id 
+            LEFT JOIN app_likequestions lq1
+                ON (q.id = lq1.question_id AND lq1.user_id = '{user_id}')
         GROUP BY lq.question_id 
         ORDER BY likes_cnt DESC;
         """)
 
-    def get_by_tag(self, tag_text):
+    def get_by_tag(self, tag_text, user_id):
         # return self.filter(tag__text=tag_text)    # сложна сюда впилить все joinы и sum!
-        return self.raw("""
+        return self.raw(f"""
         SELECT
                 sum(lq.mark) AS likes_cnt,
+                lq1.mark AS current_user_mark,
                 *
         FROM app_question q
             INNER JOIN app_question_tag qt
                 ON (q.id = qt.question_id)
             INNER JOIN app_tag t
-                ON (qt.tag_id = t.id AND t.text = 'behavior')
+                ON (qt.tag_id = t.id AND t.text = '{tag_text}')
             LEFT JOIN app_likequestions lq
                 ON q.id = lq.question_id
+            LEFT JOIN app_likequestions lq1
+                ON (q.id = lq1.question_id AND lq1.user_id = '{user_id}')
         GROUP BY lq.question_id
         ORDER BY q.created DESC;
         """)
@@ -87,6 +112,7 @@ class AnswerManager(models.Manager):
 
 class Answer(models.Model):
     text = models.TextField()
+    is_correct = models.BooleanField('IsCorrect', default=False)
     author = models.ForeignKey('User', on_delete=models.CASCADE)
     question = models.ForeignKey('Question', on_delete=models.CASCADE)
 

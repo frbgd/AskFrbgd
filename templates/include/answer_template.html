@@ -9,28 +9,23 @@
                 <img class="img_in_question" src="{{ MEDIA_URL }}default.png">
             {% endif %}
         </div>
-        <div class="likes_in_answer">
-{#            <a href="#">👍</a>#}
-{#            27#}
-{#            <a href="#">👎</a>#}
-        </div>
     </div>
     <div class="col-10">
         <div class="answer-text">{{ answer.text }}
         </div>
-{#        <div class="row question-footer">#}
-{#            <div class="col">#}
-{#                <div class="form-check">#}
-{#                    <input class="form-check-input"#}
-{#                           type="checkbox"#}
-{#                           value=""#}
-{#                           id="flexCheckDefault">#}
-{#                    <label class="form-check-label"#}
-{#                           for="flexCheckDefault">#}
-{#                        Correct#}
-{#                    </label>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
+        <div class="row question-footer">
+            <div class="col">
+                <div class="form-check">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           value=""
+                           id="flexCheckDefault">
+                    <label class="form-check-label"
+                           for="flexCheckDefault">
+                        Correct
+                    </label>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
