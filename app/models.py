@@ -2,7 +2,6 @@ from django.contrib.auth.models import User as DjangoUser
 from django.contrib.auth.models import UserManager
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Count
 from django.utils import timezone
 
 
@@ -61,7 +60,7 @@ class Question(models.Model):
 
 class AnswerManager(models.Manager):
     def get_by_question(self, question_id):
-        return self.filter(question_id=question_id)
+        return self.filter(question_id=question_id).order_by('-id')
 
 
 class Answer(models.Model):
@@ -95,6 +94,7 @@ class Tag(models.Model):
     class Meta:
         verbose_name = 'Tag'
         verbose_name_plural = 'Tags'
+
 
 class LikeQuestions(models.Model):
     question = models.ForeignKey('Question', on_delete=models.CASCADE)

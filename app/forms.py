@@ -1,7 +1,7 @@
 from django.forms import ModelForm, Textarea, SelectMultiple
 from django.utils.translation import gettext_lazy as _
 
-from app.models import Question
+from app.models import Question, Answer
 
 
 class AskForm(ModelForm):
@@ -29,6 +29,23 @@ class AskForm(ModelForm):
             'tag': SelectMultiple(attrs={
                 'rows': 12,
                 'style': 'width: 100%; height: 300px;',
+                'class': 'form-control'
+            })
+        }
+
+
+class AnswerForm(ModelForm):
+    class Meta:
+        model = Answer
+        fields = ('text', )
+        labels = {
+            'text': _('Your answer')
+        }
+        widgets = {
+            'text': Textarea(attrs={
+                'placeholder': 'Enter your answer here...',
+                'rows': 3,
+                'style': 'width: 100%;',
                 'class': 'form-control'
             })
         }

@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import View
 
-from app.forms import AskForm
+from app.forms import AskForm, AnswerForm
 from app.models import Question, Tag, Answer
 
 
@@ -47,7 +47,7 @@ class AskView(View):
     def post(self, request):
         form = AskForm(request.POST)
         new_question = form.save(commit=False)
-        new_question.author_id = 1
+        new_question.author_id = 1  # TODO set current user
         new_question.save()
         form.save_m2m()
         return HttpResponseRedirect(reverse('question', args=(new_question.id, )))
@@ -70,12 +70,23 @@ def login(request):
     return render(request, 'login.html', {})
 
 
-def question(request, pk):
+class QuestionView(View):
     """Страница 1 вопроса со списком ответов"""
-    q = get_object_or_404(Question, pk=pk)
-    context = paginate(Answer.objects.get_by_question(pk), request, 3)
-    context['question'] = q
-    return render(request, 'question.html', context)
+
+    def get(self, request, pk):
+        q = get_object_or_404(Question, pk=pk)
+        context = paginate(Answer.objects.get_by_question(pk), request, 3)
+        context['question'] = q
+        context['form'] = AnswerForm()
+        return render(request, 'question.html', context)
+
+    def post(self, request, pk):
+        form = AnswerForm(request.POST)
+        new_answer = form.save(commit=False)
+        new_answer.author_id = 1  # TODO set current user
+        new_answer.question_id = pk
+        new_answer.save()
+        return HttpResponseRedirect(reverse('question', args=(pk, )))
 
 
 def settings(request):

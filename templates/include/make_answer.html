@@ -1,9 +1,13 @@
-<div class="mb-3">
-        <textarea class="form-control"
-                  id="exampleFormControlTextarea1"
-                  rows="3"
-                  placeholder="Enter your answer here.."></textarea>
-</div>
-<button type="button"
-        class="btn btn-light answer-btn">Answer!
-</button>
+<form action="{% url 'question' question.id %}" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+            {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+    <input class="btn btn-light add-btn" type="submit" value="Answer!">
+</form>
