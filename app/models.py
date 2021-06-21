@@ -121,7 +121,7 @@ class Tag(models.Model):
 class LikeQuestions(models.Model):
     question = models.ForeignKey('Question', on_delete=models.CASCADE)
     user = models.ForeignKey('User', on_delete=models.CASCADE)
-    mark = models.IntegerField(default=1)
+    mark = models.IntegerField('Mark', default=1)
 
     class Meta:
         unique_together = ['question', 'user']
