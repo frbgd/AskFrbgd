@@ -127,3 +127,30 @@ class SignInForm(AuthenticationForm):
             'class': 'form-control'
         }),
     )
+
+
+class UserSettingsForm(forms.ModelForm):
+    # TODO add Upload avatar field
+    class Meta:
+        model = DjangoUser
+        fields = ('first_name', 'last_name', 'email')
+        widgets = {
+            'first_name': forms.Textarea(attrs={
+                'placeholder': 'Dr',
+                'rows': 1,
+                'style': 'width: 100%;',
+                'class': 'form-control'
+            }),
+            'last_name': forms.Textarea(attrs={
+                'placeholder': 'Pepper',
+                'rows': 1,
+                'style': 'width: 100%;',
+                'class': 'form-control'
+            }),
+            'email': forms.Textarea(attrs={
+                'placeholder': 'dr.pepper@mail.com',
+                'rows': 1,
+                'style': 'width: 100%;',
+                'class': 'form-control'
+            })
+        }

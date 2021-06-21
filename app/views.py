@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import View
 
-from app.forms import AskForm, AnswerForm, SignUpForm, SignInForm
+from app.forms import AskForm, AnswerForm, SignUpForm, SignInForm, UserSettingsForm
 from app.models import Question, Tag, Answer, User
 
 
@@ -49,6 +49,8 @@ class AskView(LoginRequiredMixin, View):
 
     def post(self, request):
         form = AskForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'ask.html', {'form': form})
         new_question = form.save(commit=False)
         new_question.author = request.user.user
         new_question.save()
@@ -118,6 +120,8 @@ class QuestionView(View):
             return HttpResponseRedirect(reverse('login'))
 
         form = AnswerForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'question.html', {'form': form})
         new_answer = form.save(commit=False)
         new_answer.author = request.user.user
         new_answer.question_id = pk
@@ -129,7 +133,15 @@ class SettingsView(LoginRequiredMixin, View):
     """Настройки пользователя"""
 
     def get(self, request):
-        return render(request, 'settings.html', {})
+        form = UserSettingsForm(instance=request.user)
+        return render(request, 'settings.html', {'form': form})
+
+    def post(self, request):
+        form = UserSettingsForm(request.POST or None, instance=request.user)
+        if not form.is_valid():
+            return render(request, 'settings.html', {'form': form})
+        form.save()
+        return HttpResponseRedirect(reverse('settings'))
 
 
 class SignUpView(View):
