@@ -1,7 +1,9 @@
 from django.core.paginator import Paginator
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.views import View
 
+from app.forms import AskForm
 from app.models import Question, Tag, Answer
 
 
@@ -36,8 +38,13 @@ def error_404(request, exception):
     return render(request, '404.html', data)
 
 
-def ask(request):
-    return render(request, 'ask.html', {})
+class AskView(View):
+    def get(self, request):
+        form = AskForm()
+        return render(request, 'ask.html', {'form': form})
+
+    def post(self, request):
+        return 'ok'
 
 
 def hot(request):
@@ -59,10 +66,7 @@ def login(request):
 
 def question(request, pk):
     """Страница 1 вопроса со списком ответов"""
-    try:
-        q = Question.objects.get(pk=pk)
-    except Question.DoesNotExist:
-        raise Http404('Question does not exist')
+    q = get_object_or_404(Question, pk=pk)
     context = paginate(Answer.objects.get_by_question(pk), request, 3)
     context['question'] = q
     return render(request, 'question.html', context)

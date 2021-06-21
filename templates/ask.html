@@ -3,28 +3,33 @@
 {% load static %}
 
 {% block content %}
-    <div class="title space_bottom-40px">New Question</div>
-    <div class="mb-3 row">
-        <label for="inputTitle" class="col-sm-2 col-form-label">Title</label>
-        <div class="col-sm-10">
-            <textarea class="form-control" id="inputTitle" rows="1"
-                      placeholder="How to a build a moon park?"></textarea>
-        </div>
-    </div>
-    <div class="mb-3 row">
-        <label for="inputText" class="col-sm-2 col-form-label">Text</label>
-        <div class="col-sm-10">
-                            <textarea class="form-control" id="inputText" rows="12" placeholder="Really? 
-How? Have no idea about it"></textarea>
-        </div>
-    </div>
-    <div class="mb-3 row">
-        <label for="inputTags" class="col-sm-2 col-form-label">Tags</label>
-        <div class="col-sm-10">
-            <textarea class="form-control" id="inputTags" rows="1" placeholder="moon park pazzle"></textarea>
-        </div>
-    </div>
-    <button type="button" class="btn btn-light add-btn">Ask!</button>
+    <form action="{% url 'ask' %}" method="post">
+    {% csrf_token %}
+{#        <div class="title space_bottom-40px">New Question</div>#}
+{#        <div class="mb-3 row">#}
+{#            <label for="inputTitle" class="col-sm-2 col-form-label">Title</label>#}
+{#            <div class="col-sm-10">#}
+{#                <textarea class="form-control" id="inputTitle" rows="1"#}
+{#                          placeholder="How to a build a moon park?"></textarea>#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="mb-3 row">#}
+{#            <label for="inputText" class="col-sm-2 col-form-label">Text</label>#}
+{#            <div class="col-sm-10">#}
+{#                                <textarea class="form-control" id="inputText" rows="12" placeholder="Really?#}
+{#    How? Have no idea about it"></textarea>#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="mb-3 row">#}
+{#            <label for="inputTags" class="col-sm-2 col-form-label">Tags</label>#}
+{#            <div class="col-sm-10">#}
+{#                <textarea class="form-control" id="inputTags" rows="1" placeholder="moon park pazzle"></textarea>#}
+{#            </div>#}
+{#        </div>#}
+{#        <button type="button" class="btn btn-light add-btn">Ask!</button>#}
+    {{ form }}
+    <input class="btn btn-light add-btn" type="submit" value="Ask">
+    </form>
 {% endblock content %}
 
 {% block side %}

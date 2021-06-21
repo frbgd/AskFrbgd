@@ -19,7 +19,7 @@ from django.urls import path
 from app import views
 
 urlpatterns = [
-    path('ask/', views.ask, name='ask'),
+    path('ask/', views.AskView.as_view(), name='ask'),
     path('hot/', views.hot, name='hot'),
     path('login/', views.login, name='login'),
     path('question/<int:pk>/', views.question, name='question'),
