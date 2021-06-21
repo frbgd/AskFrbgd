@@ -41,6 +41,8 @@ def error_404(request, exception):
 
 
 class AskView(LoginRequiredMixin, View):
+    """Создание нового вопроса"""
+
     def get(self, request):
         form = AskForm()
         return render(request, 'ask.html', {'form': form})
@@ -55,15 +57,17 @@ class AskView(LoginRequiredMixin, View):
 
 
 class HotView(View):
+    """Список “лучших” вопросов"""
+
     def get(self, request):
-        """Список “лучших” вопросов"""
         context = paginate(Question.objects.get_hottest(), request, 3)
         return render(request, 'hot_questions.html', context)
 
 
 class ListingQView(View):
+    """Список вопросов по тегу"""
+
     def get(self, request, tag_name):
-        """Список вопросов по тегу"""
         context = paginate(Question.objects.get_by_tag(tag_name), request, 3)
         context['tags'] = Tag.objects.get_by_text(tag_name)
         return render(request, 'listing_q.html', context)
@@ -122,6 +126,8 @@ class QuestionView(View):
 
 
 class SettingsView(LoginRequiredMixin, View):
+    """Настройки пользователя"""
+
     def get(self, request):
         return render(request, 'settings.html', {})
 
@@ -150,7 +156,8 @@ class SignUpView(View):
 
 
 class IndexView(View):
+    """Список новых вопросов"""
+
     def get(self, request):
-        """Список новых вопросов"""
         context = paginate(Question.objects.get_latest(), request, 3)
         return render(request, 'index.html', context)
