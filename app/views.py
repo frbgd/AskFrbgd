@@ -1,10 +1,13 @@
+from django.contrib.auth import logout, authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, AccessMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import View
 
-from app.forms import AskForm, AnswerForm, SignUpForm
+from app.forms import AskForm, AnswerForm, SignUpForm, SignInForm
 from app.models import Question, Tag, Answer, User
 
 
@@ -38,7 +41,7 @@ def error_404(request, exception):
     return render(request, '404.html', {})
 
 
-class AskView(View):
+class AskView(LoginRequiredMixin, View):
     def get(self, request):
         form = AskForm()
         return render(request, 'ask.html', {'form': form})
@@ -46,27 +49,55 @@ class AskView(View):
     def post(self, request):
         form = AskForm(request.POST)
         new_question = form.save(commit=False)
-        new_question.author_id = 1  # TODO set current user
+        new_question.author = request.user.user
         new_question.save()
         form.save_m2m()
         return HttpResponseRedirect(reverse('question', args=(new_question.id, )))
 
 
-def hot(request):
-    """Список “лучших” вопросов"""
-    context = paginate(Question.objects.get_hottest(), request, 3)
-    return render(request, 'hot_questions.html', context)
+class HotView(View):
+    def get(self, request):
+        """Список “лучших” вопросов"""
+        context = paginate(Question.objects.get_hottest(), request, 3)
+        return render(request, 'hot_questions.html', context)
 
 
-def listing_q(request, tag_name):
-    """Список вопросов по тегу"""
-    context = paginate(Question.objects.get_by_tag(tag_name), request, 3)
-    context['tags'] = Tag.objects.get_by_text(tag_name)
-    return render(request, 'listing_q.html', context)
+class ListingQView(View):
+    def get(self, request, tag_name):
+        """Список вопросов по тегу"""
+        context = paginate(Question.objects.get_by_tag(tag_name), request, 3)
+        context['tags'] = Tag.objects.get_by_text(tag_name)
+        return render(request, 'listing_q.html', context)
 
 
-def login(request):
-    return render(request, 'login.html', {})
+class LoginView(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('main'))
+
+        form = SignInForm()
+        return render(request, 'login.html', {'form': form})
+
+    def post(self, request):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('main'))
+
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            next = request.POST.get('next') or reverse('main')
+            return HttpResponseRedirect(next)
+        else:
+            form = SignInForm()
+            return render(request, 'login.html', {'form': form, 'unauthorized': True})
+
+
+class LogOutView(View):
+    def get(self, request):
+        logout(request)
+        return HttpResponseRedirect(reverse('main'))
 
 
 class QuestionView(View):
@@ -80,24 +111,34 @@ class QuestionView(View):
         return render(request, 'question.html', context)
 
     def post(self, request, pk):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('login'))
+
         form = AnswerForm(request.POST)
         new_answer = form.save(commit=False)
-        new_answer.author_id = 1  # TODO set current user
+        new_answer.author = request.user.user
         new_answer.question_id = pk
         new_answer.save()
         return HttpResponseRedirect(reverse('question', args=(pk, )))
 
 
-def settings(request):
-    return render(request, 'settings.html', {})
+class SettingsView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'settings.html', {})
 
 
 class SignUpView(View):
     def get(self, request):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('main'))
+
         form = SignUpForm()
         return render(request, 'signup.html', {'form': form})
 
     def post(self, request):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('main'))
+
         form = SignUpForm(request.POST)
         if not form.is_valid():
             return render(request, 'signup.html', {'form': form})
@@ -109,7 +150,8 @@ class SignUpView(View):
         return HttpResponseRedirect(reverse('main'))
 
 
-def index(request):
-    """Список новых вопросов"""
-    context = paginate(Question.objects.get_latest(), request, 3)
-    return render(request, 'index.html', context)
+class IndexView(View):
+    def get(self, request):
+        """Список новых вопросов"""
+        context = paginate(Question.objects.get_latest(), request, 3)
+        return render(request, 'index.html', context)

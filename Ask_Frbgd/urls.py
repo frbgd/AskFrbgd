@@ -20,13 +20,14 @@ from app import views
 
 urlpatterns = [
     path('ask/', views.AskView.as_view(), name='ask'),
-    path('hot/', views.hot, name='hot'),
-    path('login/', views.login, name='login'),
+    path('hot/', views.HotView.as_view(), name='hot'),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('logout/', views.LogOutView.as_view(), name='logout'),
     path('question/<int:pk>/', views.QuestionView.as_view(), name='question'),
-    path('settings/', views.settings, name='settings'),
+    path('settings/', views.SettingsView.as_view(), name='settings'),
     path('signup/', views.SignUpView.as_view(), name='signup'),
-    path('tag/<tag_name>/', views.listing_q, name='tag'),
-    path('', views.index, name='main'),
+    path('tag/<tag_name>/', views.ListingQView.as_view(), name='tag'),
+    path('', views.IndexView.as_view(), name='main'),
 ]
 
 handler404 = 'app.views.error_404'

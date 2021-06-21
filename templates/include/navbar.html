@@ -24,23 +24,39 @@
                             <button type="button" class="btn btn search-btn">Ask!</button>
                         </a>
                     </form>
-                     <img class="img_in_navbar" src="{% static "img/moto.jpg"%}" alt=""> </img>
+                    {% if user.is_authenticated %}
+                        {% if user.user.image %}
+                            <img class="img_in_question" src="{% static "img/{{ user.user.image }}" %}">
+                        {% else %}
+                            <img class="img_in_navbar" src="{% static "img/moto.jpg"%}" alt=""> </img>
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
             <div class="container">
-                <div class="col">
-                    <div class="row">
-                        <div class="nav-text">Aleksey Kucheryavenko</div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <a class="nav-text" href="{% url "settings" %}">settings</a>
+                {% if user.is_authenticated %}
+                    <div class="col">
+                        <div class="row">
+                            <div class="nav-text">{{ user.get_username }}</div>
                         </div>
-                        <div class="col">
-                            <a class="nav-text">log out</a>
+                        <div class="row">
+                            <div class="col">
+                                <a class="nav-text" href="{% url "settings" %}">settings</a>
+                            </div>
+                            <div class="col">
+                                <a href="{% url "logout" %}" class="nav-text">log out</a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% else %}
+                    <div class="col-md-4"></div>
+                    <div class="col-md-2">
+                        <a class="nav-text" href="{% url "login" %}">log in</a>
+                    </div>
+                    <div class="col-md-6">
+                        <a class="nav-text" href="{% url "signup" %}">register</a>
+                    </div>
+                {% endif %}
             </div>
         </nav>
 </head>
