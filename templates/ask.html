@@ -27,7 +27,15 @@
 {#            </div>#}
 {#        </div>#}
 {#        <button type="button" class="btn btn-light add-btn">Ask!</button>#}
-    {{ form }}
+    {% for field in form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+            {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %}
+        </div>
+    {% endfor %}
     <input class="btn btn-light add-btn" type="submit" value="Ask">
     </form>
 {% endblock content %}

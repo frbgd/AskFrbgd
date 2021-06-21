@@ -43,10 +43,10 @@ class QuestionManager(models.Manager):
 
 
 class Question(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=100)
     text = models.TextField()
     author = models.ForeignKey('User', on_delete=models.CASCADE)
-    tag = models.ManyToManyField('Tag')
+    tag = models.ManyToManyField('Tag', blank=True, null=True)
     created = models.DateTimeField(default=timezone.now)
 
     objects = QuestionManager()

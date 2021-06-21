@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
-from django.http import Http404
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 from django.views import View
 
 from app.forms import AskForm
@@ -44,7 +45,12 @@ class AskView(View):
         return render(request, 'ask.html', {'form': form})
 
     def post(self, request):
-        return 'ok'
+        form = AskForm(request.POST)
+        new_question = form.save(commit=False)
+        new_question.author_id = 1
+        new_question.save()
+        form.save_m2m()
+        return HttpResponseRedirect(reverse('question', args=(new_question.id, )))
 
 
 def hot(request):
