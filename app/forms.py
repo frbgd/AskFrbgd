@@ -55,7 +55,8 @@ class AnswerForm(forms.ModelForm):
 
 
 class SignUpForm(UserCreationForm):
-    # TODO add Upload avatar field
+    image = forms.ImageField(required=False)
+
     password1 = forms.CharField(
         label=_("Password"),
         strip=False,
@@ -130,7 +131,7 @@ class SignInForm(AuthenticationForm):
 
 
 class UserSettingsForm(forms.ModelForm):
-    image = forms.ImageField(required=False, allow_empty_file=True)
+    image = forms.ImageField(required=False)
 
     class Meta:
         model = DjangoUser

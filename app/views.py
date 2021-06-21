@@ -137,7 +137,7 @@ class SettingsView(LoginRequiredMixin, View):
         return render(request, 'settings.html', {'form': form})
 
     def post(self, request):
-        form = UserSettingsForm(request.POST or None, request.FILES, instance=request.user)
+        form = UserSettingsForm(request.POST, request.FILES, instance=request.user)
         if not form.is_valid():
             return render(request, 'settings.html', {'form': form})
         user = request.user.user
@@ -159,15 +159,16 @@ class SignUpView(View):
         if request.user.is_authenticated:
             return HttpResponseRedirect(reverse('main'))
 
-        form = SignUpForm(request.POST)
+        form = SignUpForm(request.POST, request.FILES)
         if not form.is_valid():
             return render(request, 'signup.html', {'form': form})
         new_django_user = form.save()
         new_user = User.objects.create(
-            django_user=new_django_user
+            django_user=new_django_user,
+            image=form.cleaned_data.get('image')
         )
         new_user.save()
-        return HttpResponseRedirect(reverse('main'))
+        return HttpResponseRedirect(reverse('login'))
 
 
 class IndexView(View):
