@@ -130,7 +130,8 @@ class SignInForm(AuthenticationForm):
 
 
 class UserSettingsForm(forms.ModelForm):
-    # TODO add Upload avatar field
+    image = forms.ImageField(required=False, allow_empty_file=True)
+
     class Meta:
         model = DjangoUser
         fields = ('first_name', 'last_name', 'email')

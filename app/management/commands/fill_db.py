@@ -62,8 +62,15 @@ class Command(BaseCommand):
                 last_name=f.last_name(),
                 email=f.email()
             )
+            if i % 3 == 0:
+                avatar = 'auto.jpg'
+            elif i % 2 == 0:
+                avatar = 'moto.jpg'
+            else:
+                avatar = None
             User.objects.create(
-                django_user=du
+                django_user=du,
+                image=avatar
             )
 
     def fill_tags(self, cnt):

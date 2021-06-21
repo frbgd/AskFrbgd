@@ -4,9 +4,9 @@
     <div class="col-2">
         <div>
              {% if question.author.image %}
-                 <img class="img_in_question" src="{% static "img/{{ question.author.image }}" %}">
+                 <img class="img_in_question" src="{{ MEDIA_URL }}{{ question.author.image }}">
              {% else %}
-                 <img class="img_in_question" src="{% static "img/moto.jpg" %}">
+                 <img class="img_in_question" src="{{ MEDIA_URL }}default.png">
              {% endif %}
         </div>
         <div class="likes_in_question">

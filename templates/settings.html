@@ -11,7 +11,7 @@
             <div class="title">{{ user.first_name }} {{ user.last_name }}</div>
         </li>
     </ul>
-    <form action="{% url 'settings' %}" method="post">
+    <form enctype="multipart/form-data" action="{% url 'settings' %}" method="post">
         {% csrf_token %}
         {% for field in form %}
         <div class="fieldWrapper">

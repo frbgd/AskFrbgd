@@ -6,7 +6,7 @@ from django.utils import timezone
 
 
 class User(models.Model):
-    image = models.ImageField(upload_to='img')
+    image = models.ImageField(blank=True, null=True)
     django_user = models.OneToOneField(DjangoUser, on_delete=models.CASCADE, blank=True, null=True)
 
     objects = UserManager()

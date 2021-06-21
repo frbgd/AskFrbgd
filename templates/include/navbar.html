@@ -26,9 +26,9 @@
                     </form>
                     {% if user.is_authenticated %}
                         {% if user.user.image %}
-                            <img class="img_in_question" src="{% static "img/{{ user.user.image }}" %}">
+                            <img class="img_in_question" src="{{ MEDIA_URL }}{{ user.user.image }}">
                         {% else %}
-                            <img class="img_in_navbar" src="{% static "img/moto.jpg"%}" alt=""> </img>
+                            <img class="img_in_question" src="{{ MEDIA_URL }}default.png">
                         {% endif %}
                     {% endif %}
                 </div>

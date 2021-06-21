@@ -137,9 +137,12 @@ class SettingsView(LoginRequiredMixin, View):
         return render(request, 'settings.html', {'form': form})
 
     def post(self, request):
-        form = UserSettingsForm(request.POST or None, instance=request.user)
+        form = UserSettingsForm(request.POST or None, request.FILES, instance=request.user)
         if not form.is_valid():
             return render(request, 'settings.html', {'form': form})
+        user = request.user.user
+        user.image = form.cleaned_data.get('image')
+        user.save()
         form.save()
         return HttpResponseRedirect(reverse('settings'))
 
