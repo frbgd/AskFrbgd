@@ -6,15 +6,13 @@ from django.utils import timezone
 
 
 class User(models.Model):
-    name = models.CharField(max_length=255)
     image = models.ImageField(upload_to='img')
-    birth_date = models.DateField()
     django_user = models.OneToOneField(DjangoUser, on_delete=models.CASCADE, blank=True, null=True)
 
     objects = UserManager()
 
     def __str__(self):
-        return self.name
+        return self.django_user.username
 
     class Meta:
         verbose_name = 'User'

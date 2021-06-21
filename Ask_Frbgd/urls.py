@@ -24,7 +24,7 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('question/<int:pk>/', views.QuestionView.as_view(), name='question'),
     path('settings/', views.settings, name='settings'),
-    path('signup/', views.signup, name='signup'),
+    path('signup/', views.SignUpView.as_view(), name='signup'),
     path('tag/<tag_name>/', views.listing_q, name='tag'),
     path('', views.index, name='main'),
 ]

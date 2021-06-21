@@ -1,5 +1,6 @@
 import random
 
+from django.contrib.auth.models import User as DjangoUser
 from django.core.management.base import BaseCommand
 from app.models import Question, User, Tag, Answer, LikeQuestions
 from random import choice
@@ -55,9 +56,14 @@ class Command(BaseCommand):
 
     def fill_users(self, cnt):
         for i in range(cnt):
+            du = DjangoUser.objects.create(
+                username=f.user_name(),
+                first_name=f.first_name(),
+                last_name=f.last_name(),
+                email=f.email()
+            )
             User.objects.create(
-                name=f.name(),
-                birth_date=f.date()
+                django_user=du
             )
 
     def fill_tags(self, cnt):

@@ -4,8 +4,8 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import View
 
-from app.forms import AskForm, AnswerForm
-from app.models import Question, Tag, Answer
+from app.forms import AskForm, AnswerForm, SignUpForm
+from app.models import Question, Tag, Answer, User
 
 
 def paginate(objects_list, request, per_page):
@@ -35,8 +35,7 @@ def paginate(objects_list, request, per_page):
 
 
 def error_404(request, exception):
-    data = {}
-    return render(request, '404.html', data)
+    return render(request, '404.html', {})
 
 
 class AskView(View):
@@ -93,8 +92,21 @@ def settings(request):
     return render(request, 'settings.html', {})
 
 
-def signup(request):
-    return render(request, 'signup.html', {})
+class SignUpView(View):
+    def get(self, request):
+        form = SignUpForm()
+        return render(request, 'signup.html', {'form': form})
+
+    def post(self, request):
+        form = SignUpForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'signup.html', {'form': form})
+        new_django_user = form.save()
+        new_user = User.objects.create(
+            django_user=new_django_user
+        )
+        new_user.save()
+        return HttpResponseRedirect(reverse('main'))
 
 
 def index(request):
