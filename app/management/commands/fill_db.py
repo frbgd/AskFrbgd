@@ -140,5 +140,6 @@ class Command(BaseCommand):
         for like in likes:
             LikeQuestions.objects.create(
                 user_id=like[0],
-                question_id=like[1]
+                question_id=like[1],
+                mark=choice([-1, 1])
             )
