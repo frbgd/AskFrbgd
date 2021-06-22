@@ -5,3 +5,7 @@ Telegram: [@frbgd](https://t.me/frbgd)
 На текущий момент реализованы ДЗ1, ДЗ2, ДЗ3, ДЗ4, ДЗ5 в ветке master.
 
 База данных: [db.sqlite3](https://yadi.sk/d/DG82mhz-o01Tzg). Положить в корень репозитория.
+
+# Запуск приложения
+
+```gunicorn Ask_Frbgd.wsgi:application -c Ask_Frbgd/gunicorn.conf.p```
