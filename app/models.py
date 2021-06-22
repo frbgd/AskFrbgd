@@ -20,11 +20,18 @@ class User(models.Model):
 
 
 class QuestionManager(models.Manager):
-    def get_one(self, pk, user_id):
+    def get_one(self, pk, user_id=None):
+        if user_id:
+            second_join = (
+                'lq1.mark',
+                f'LEFT JOIN app_likequestions lq1 ON (q.id = lq1.question_id AND lq1.user_id = \'f{user_id}\')'
+            )
+        else:
+            second_join = ('0', '')
         return self.raw(f"""
         SELECT 
                 COALESCE(sum(lq.mark), 0) AS likes_cnt,
-                lq1.mark AS current_user_mark, 
+                {second_join[0]} AS current_user_mark, 
                 q.id AS id, q.title AS title, q.text AS text, q.author_id AS author_id, q.created AS created
         FROM app_question q
             LEFT JOIN app_likequestions lq 
@@ -36,44 +43,61 @@ class QuestionManager(models.Manager):
         ORDER BY q.created DESC;
         """)
 
-    def get_latest(self, user_id):
-        # return self.all().order_by('-created')    # сложна сюда впилить join и sum!
+    def get_latest(self, user_id=None):
+        if user_id:
+            second_join = (
+                'lq1.mark',
+                f'LEFT JOIN app_likequestions lq1 ON (q.id = lq1.question_id AND lq1.user_id = \'f{user_id}\')'
+            )
+        else:
+            second_join = ('0', '')
         return self.raw(f"""
         SELECT
                 COALESCE(sum(lq.mark), 0) AS likes_cnt,
-                lq1.mark AS current_user_mark,
+                {second_join[0]} AS current_user_mark,
                 q.id AS id, q.title AS title, q.text AS text, q.author_id AS author_id, q.created AS created
         FROM app_question q
             LEFT JOIN app_likequestions lq
                 ON q.id = lq.question_id
-            LEFT JOIN app_likequestions lq1
-                ON (q.id = lq1.question_id AND lq1.user_id = '10113')
+            {second_join[1]}
         GROUP BY q.id
         ORDER BY q.created DESC;
         """)
 
-    def get_hottest(self, user_id):
+    def get_hottest(self, user_id=None):
+        if user_id:
+            second_join = (
+                'lq1.mark',
+                f'LEFT JOIN app_likequestions lq1 ON (q.id = lq1.question_id AND lq1.user_id = \'f{user_id}\')'
+            )
+        else:
+            second_join = ('0', '')
         return self.raw(f"""
         SELECT 
                 COALESCE(sum(lq.mark), 0) AS likes_cnt,
-                lq1.mark AS current_user_mark, 
+                {second_join[0]} AS current_user_mark, 
                 q.id AS id, q.title AS title, q.text AS text, q.author_id AS author_id, q.created AS created
         FROM app_question q
             LEFT JOIN app_likequestions lq 
                 ON q.id = lq.question_id 
-            LEFT JOIN app_likequestions lq1
-                ON (q.id = lq1.question_id AND lq1.user_id = '{user_id}')
+            {second_join[1]}
         GROUP BY q.id 
         ORDER BY likes_cnt DESC;
         """)
 
     def get_by_tag(self, tag_text, user_id):
-        # return self.filter(tag__text=tag_text)    # сложна сюда впилить все joinы и sum!
+        if user_id:
+            second_join = (
+                'lq1.mark',
+                f'LEFT JOIN app_likequestions lq1 ON (q.id = lq1.question_id AND lq1.user_id = \'f{user_id}\')'
+            )
+        else:
+            second_join = ('0', '')
         return self.raw(f"""
         SELECT
                 COALESCE(sum(lq.mark), 0) AS likes_cnt,
-                lq1.mark AS current_user_mark,
-                *
+                {second_join[0]} AS current_user_mark,
+                q.id AS id, q.title AS title, q.text AS text, q.author_id AS author_id, q.created AS created
         FROM app_question q
             INNER JOIN app_question_tag qt
                 ON (q.id = qt.question_id)
@@ -81,8 +105,7 @@ class QuestionManager(models.Manager):
                 ON (qt.tag_id = t.id AND t.text = '{tag_text}')
             LEFT JOIN app_likequestions lq
                 ON q.id = lq.question_id
-            LEFT JOIN app_likequestions lq1
-                ON (q.id = lq1.question_id AND lq1.user_id = '{user_id}')
+            {second_join[1]}
         GROUP BY q.id
         ORDER BY q.created DESC;
         """)

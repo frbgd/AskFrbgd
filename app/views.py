@@ -92,7 +92,9 @@ class HotView(View):
     """Список “лучших” вопросов"""
 
     def get(self, request):
-        context = paginate(Question.objects.get_hottest(request.user.user.id), request, 3)
+        context = paginate(Question.objects.get_hottest(
+            request.user.user.id if request.user.is_authenticated else None
+        ), request, 3)
         return render(request, 'hot_questions.html', context)
 
 
@@ -100,7 +102,10 @@ class ListingQView(View):
     """Список вопросов по тегу"""
 
     def get(self, request, tag_name):
-        context = paginate(Question.objects.get_by_tag(tag_name, request.user.user.id), request, 3)
+        context = paginate(Question.objects.get_by_tag(
+            tag_name,
+            request.user.user.id if request.user.is_authenticated else None
+        ), request, 3)
         context['tags'] = Tag.objects.get_by_text(tag_name)
         return render(request, 'listing_q.html', context)
 
@@ -175,7 +180,10 @@ class QuestionView(View):
     """Страница 1 вопроса со списком ответов"""
 
     def get(self, request, pk):
-        q = Question.objects.get_one(pk, request.user.user.id)
+        q = Question.objects.get_one(
+            pk,
+            request.user.user.id if request.user.is_authenticated else None
+        )
         if len(q) == 0:
             raise Http404('Question doesn\'t found')
         context = paginate(Answer.objects.get_by_question(pk), request, 3)
@@ -243,5 +251,7 @@ class IndexView(View):
     """Список новых вопросов"""
 
     def get(self, request):
-        context = paginate(Question.objects.get_latest(request.user.user.id), request, 3)
+        context = paginate(Question.objects.get_latest(
+            request.user.user.id if request.user.is_authenticated else None
+        ), request, 3)
         return render(request, 'index.html', context)

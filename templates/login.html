@@ -20,9 +20,9 @@
             <p class="help form-text text-muted">{{ field.help_text|safe }}</p>
             {% endif %}
         </div>
-    {% endfor %}
-    <input type="hidden" name="next" value="{{ request.GET.next }}"/>
-    <input class="btn btn-light add-btn" type="submit" value="Log in!">
+        {% endfor %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}"/>
+        <input class="btn btn-light add-btn" type="submit" value="Log in!">
     </form>
     <div class="mb-3 row">
         <div class="col-sm-2"></div>
