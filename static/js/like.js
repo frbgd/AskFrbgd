@@ -12,6 +12,9 @@ function send_like(aLink, mark) {
 
         success : function(json) {
             console.log(json);
+            if (json.mark === mark) {
+                aLink.removeAttr("href")
+            }
             console.log("success");
         },
 
