@@ -217,7 +217,8 @@ class SettingsView(LoginRequiredMixin, View):
         if not form.is_valid():
             return render(request, 'settings.html', {'form': form})
         user = request.user.user
-        user.image = form.cleaned_data.get('image')
+        if form.cleaned_data.get('image'):
+            user.image = form.cleaned_data.get('image')
         user.save()
         form.save()
         return HttpResponseRedirect(reverse('settings'))
