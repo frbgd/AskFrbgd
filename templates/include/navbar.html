@@ -44,17 +44,17 @@
                                 <a class="nav-text" href="{% url "settings" %}">settings</a>
                             </div>
                             <div class="col">
-                                <a href="{% url "logout" %}" class="nav-text">log out</a>
+                                <a href="{% url "logout" %}?next={{ request.path }}" class="nav-text">log out</a>
                             </div>
                         </div>
                     </div>
                 {% else %}
                     <div class="col-md-4"></div>
                     <div class="col-md-2">
-                        <a class="nav-text" href="{% url "login" %}">log in</a>
+                        <a class="nav-text" href="{% url "login" %}?next={{ request.path }}">log in</a>
                     </div>
                     <div class="col-md-6">
-                        <a class="nav-text" href="{% url "signup" %}">register</a>
+                        <a class="nav-text" href="{% url "signup" %}?next={{ request.path }}">register</a>
                     </div>
                 {% endif %}
             </div>

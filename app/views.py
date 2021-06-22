@@ -127,8 +127,7 @@ class LoginView(View):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            next = request.POST.get('next') or reverse('main')
-            return HttpResponseRedirect(next)
+            return HttpResponseRedirect(request.POST.get('next') or reverse('main'))
         else:
             form = SignInForm()
             return render(request, 'login.html', {'form': form, 'unauthorized': True})
@@ -137,7 +136,7 @@ class LoginView(View):
 class LogOutView(View):
     def get(self, request):
         logout(request)
-        return HttpResponseRedirect(reverse('main'))
+        return HttpResponseRedirect(request.GET.get('next') or reverse('main'))
 
 
 class QuestionLikeView(LoginRequiredMixin, View):
