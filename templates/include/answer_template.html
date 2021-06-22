@@ -17,9 +17,16 @@
             <div class="col">
                 <div class="form-check">
                     <input class="form-check-input"
-                           type="checkbox"
-                           value=""
-                           id="flexCheckDefault">
+                        type="checkbox"
+                        value=""
+                        id="flexCheckDefault"
+                        {% if answer.is_correct %}
+                            checked
+                        {% endif %}
+                        {% if not user.is_authenticated or question.author_id != user.user.id %}
+                            disabled
+                        {% endif %}
+                    >
                     <label class="form-check-label"
                            for="flexCheckDefault">
                         Correct
