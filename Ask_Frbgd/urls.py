@@ -20,6 +20,7 @@ from django.urls import path
 from app import views
 
 urlpatterns = [
+    path('answer/<int:pk>/correct/', views.ToggleAnswerIsCorrect.as_view(), name='toggle_correct'),
     path('ask/', views.AskView.as_view(), name='ask'),
     path('hot/', views.HotView.as_view(), name='hot'),
     path('login/', views.LoginView.as_view(), name='login'),

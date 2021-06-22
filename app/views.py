@@ -1,7 +1,7 @@
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import View
@@ -38,6 +38,34 @@ def paginate(objects_list, request, per_page):
 
 def error_404(request, exception):
     return render(request, '404.html', {})
+
+
+class ToggleAnswerIsCorrect(LoginRequiredMixin, View):
+    """Пометка ответа как правильного или нет"""
+
+    def post(self, request, pk):
+        try:
+            answer = get_object_or_404(Answer, pk=pk)
+        except Answer.DoesNotExist:
+            return JsonResponse({'success': False, 'reason': 'Answer doesn\'t exist'}, status=404)
+        try:
+            question = get_object_or_404(Question, pk=answer.question_id)
+        except Question.DoesNotExist:
+            return JsonResponse({'success': False, 'reason': 'Question doesn\'t exist'}, status=404)
+        if question.author != request.user.user:
+            return JsonResponse({'success': False, 'reason': ''})
+
+        if answer.is_correct:
+            answer.is_correct = False
+        else:
+            previous_correct_answer = Answer.objects.get_correct_answers(answer.question_id)
+            for a in previous_correct_answer:
+                a.is_correct = False
+                a.save()
+            answer.is_correct = True
+        answer.save()
+
+        return JsonResponse({'success': True})
 
 
 class AskView(LoginRequiredMixin, View):

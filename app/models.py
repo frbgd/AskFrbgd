@@ -109,6 +109,9 @@ class AnswerManager(models.Manager):
     def get_by_question(self, question_id):
         return self.filter(question_id=question_id).order_by('-id')
 
+    def get_correct_answers(self, question_id):
+        return self.filter(question_id=question_id, is_correct=True)
+
 
 class Answer(models.Model):
     text = models.TextField()

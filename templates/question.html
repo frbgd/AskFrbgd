@@ -17,3 +17,45 @@
     {% include "include/popular_tags.html" %}
     {% include "include/best_members.html" %}
 {% endblock side %}
+
+{% block javascript %}
+    <script>
+        $('input[type=checkbox]').change(function() {
+            const checkbox = $(this);
+            if (checkbox.is(':checked')) {
+                console.log("Checkbox is checked.. answer_id = " + $(this).attr("answerId"))
+            } else {
+                console.log("Checkbox is not checked..answer_id = " + $(this).attr("answerId"))
+            }
+
+            var answerId = $(this).attr("answerId")
+
+            $.ajax({
+                url : "/answer/" + answerId + '/correct/',
+                type : "POST",
+
+                success : function(json) {
+                    console.log(json);
+                    if (checkbox.is(':checked')) {
+                        $('input[type=checkbox]:checked').each(function () {
+                            if ($(this).attr("answerId") !== answerId) {
+                                console.log("Unchecking checkbox with answer_id = " + $(this).attr("answerId"))
+                                $(this).prop('checked', false);
+                            }
+                        });
+                    }
+                    console.log("success");
+                },
+
+                error : function(xhr,errmsg,err) {
+                    if (checkbox.is(':checked')) {
+                        checkbox.prop('checked', false);
+                    } else {
+                        checkbox.prop('checked', true);
+                    }
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+            });
+        });
+    </script>
+{% endblock javascript %}
