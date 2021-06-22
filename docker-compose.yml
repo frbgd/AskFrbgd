@@ -1,5 +1,13 @@
 version: '3'
 services:
+  wsgi_app:
+    build:
+      context: ./wsgi_app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8001:8001
+
   django:
     build:
       context: ./django_app
