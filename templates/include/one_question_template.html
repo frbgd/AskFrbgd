@@ -13,13 +13,13 @@
             {% if question.current_user_mark == 1 %}
                 👍
             {% else %}
-                <a href="#">👍</a>
+                <a name="like" questionId="{{ question.id }}" href="#">👍</a>
             {% endif %}
             {{ question.likes_cnt }}
             {% if question.current_user_mark == -1 %}
                 👎
             {% else %}
-                <a href="#">👎</a>
+                <a name="dislike" questionId="{{ question.id }}" href="#">👎</a>
             {% endif %}
         </div>
     </div>

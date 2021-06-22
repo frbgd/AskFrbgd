@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
@@ -7,7 +9,7 @@ from django.urls import reverse
 from django.views import View
 
 from app.forms import AskForm, AnswerForm, SignUpForm, SignInForm, UserSettingsForm
-from app.models import Question, Tag, Answer, User
+from app.models import Question, Tag, Answer, User, LikeQuestions
 
 
 def paginate(objects_list, request, per_page):
@@ -131,6 +133,42 @@ class LogOutView(View):
     def get(self, request):
         logout(request)
         return HttpResponseRedirect(reverse('main'))
+
+
+class QuestionLikeView(LoginRequiredMixin, View):
+    """Обработка лайка/дизлайка"""
+
+    def post(self, request, pk):
+        try:
+            q = Question.objects.get(pk=pk)
+        except Question.DoesNotExist:
+            return JsonResponse({'success': False, 'reason': 'Question doesn\'t exist'}, status=404)
+
+        request_body = request.body.decode('utf-8')
+        body = json.loads(request_body)
+        if 'mark' not in body or not isinstance(body.get('mark'), int) or not body.get('mark') in [1, -1]:
+            return JsonResponse({'success': False, 'reason': 'Invalid body'}, status=400)
+
+        try:
+            like = LikeQuestions.objects.get(question=q, user=request.user.user)
+        except LikeQuestions.DoesNotExist:
+            like = LikeQuestions.objects.create(
+                question=q,
+                user=request.user.user,
+                mark=body.get('mark')
+            )
+            return JsonResponse({'success': True, 'mark': like.mark})
+
+        if body.get('mark') == 1:
+            if like.mark < 1:
+                like.mark += 1
+                like.save()
+        elif body.get('mark') == -1:
+            if like.mark > -1:
+                like.mark -= 1
+                like.save()
+
+        return JsonResponse({'success': True, 'mark': like.mark})
 
 
 class QuestionView(View):

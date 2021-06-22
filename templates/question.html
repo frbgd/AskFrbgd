@@ -19,6 +19,7 @@
 {% endblock side %}
 
 {% block javascript %}
+    <script src="{% static "js/like.js" %}"> </script>
     <script>
         $('input[type=checkbox]').change(function() {
             const checkbox = $(this);
