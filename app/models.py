@@ -23,7 +23,7 @@ class QuestionManager(models.Manager):
     def get_one(self, pk, user_id):
         return self.raw(f"""
         SELECT 
-                sum(lq.mark) AS likes_cnt,
+                COALESCE(sum(lq.mark), 0) AS likes_cnt,
                 lq1.mark AS current_user_mark, 
                 q.id AS id, q.title AS title, q.text AS text, q.author_id AS author_id, q.created AS created
         FROM app_question q
@@ -32,30 +32,30 @@ class QuestionManager(models.Manager):
             LEFT JOIN app_likequestions lq1
                 ON (q.id = lq1.question_id AND lq1.user_id = '{user_id}')
         WHERE q.id = '{pk}' 
-        GROUP BY lq.question_id 
+        GROUP BY q.id
         ORDER BY q.created DESC;
         """)
 
     def get_latest(self, user_id):
         # return self.all().order_by('-created')    # сложна сюда впилить join и sum!
         return self.raw(f"""
-        SELECT 
-                sum(lq.mark) AS likes_cnt,
-                lq1.mark AS current_user_mark, 
+        SELECT
+                COALESCE(sum(lq.mark), 0) AS likes_cnt,
+                lq1.mark AS current_user_mark,
                 q.id AS id, q.title AS title, q.text AS text, q.author_id AS author_id, q.created AS created
         FROM app_question q
-            LEFT JOIN app_likequestions lq 
+            LEFT JOIN app_likequestions lq
                 ON q.id = lq.question_id
             LEFT JOIN app_likequestions lq1
-                ON (q.id = lq1.question_id AND lq1.user_id = '{user_id}') 
-        GROUP BY lq.question_id 
+                ON (q.id = lq1.question_id AND lq1.user_id = '10113')
+        GROUP BY q.id
         ORDER BY q.created DESC;
         """)
 
     def get_hottest(self, user_id):
         return self.raw(f"""
         SELECT 
-                sum(lq.mark) AS likes_cnt,
+                COALESCE(sum(lq.mark), 0) AS likes_cnt,
                 lq1.mark AS current_user_mark, 
                 q.id AS id, q.title AS title, q.text AS text, q.author_id AS author_id, q.created AS created
         FROM app_question q
@@ -63,7 +63,7 @@ class QuestionManager(models.Manager):
                 ON q.id = lq.question_id 
             LEFT JOIN app_likequestions lq1
                 ON (q.id = lq1.question_id AND lq1.user_id = '{user_id}')
-        GROUP BY lq.question_id 
+        GROUP BY q.id 
         ORDER BY likes_cnt DESC;
         """)
 
@@ -71,7 +71,7 @@ class QuestionManager(models.Manager):
         # return self.filter(tag__text=tag_text)    # сложна сюда впилить все joinы и sum!
         return self.raw(f"""
         SELECT
-                sum(lq.mark) AS likes_cnt,
+                COALESCE(sum(lq.mark), 0) AS likes_cnt,
                 lq1.mark AS current_user_mark,
                 *
         FROM app_question q
@@ -83,7 +83,7 @@ class QuestionManager(models.Manager):
                 ON q.id = lq.question_id
             LEFT JOIN app_likequestions lq1
                 ON (q.id = lq1.question_id AND lq1.user_id = '{user_id}')
-        GROUP BY lq.question_id
+        GROUP BY q.id
         ORDER BY q.created DESC;
         """)
 
