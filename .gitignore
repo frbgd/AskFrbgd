@@ -137,6 +137,5 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-/db.sqlite3
 /venv/
 /.idea/

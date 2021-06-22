@@ -1,0 +1,25 @@
+version: '3'
+services:
+  django:
+    build:
+      context: ./django_app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./db/:/app/db/
+      - ./nginx/static/:/app/static/
+      - ./nginx/uploads/:/app/uploads/
+    environment:
+      DATABASE_PATH: /app/db/db.sqlite3
+    ports:
+      - 8000:8000
+
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/static/:/var/www/static/
+      - ./nginx/uploads/:/var/www/uploads/
+    ports:
+      - 80:80
